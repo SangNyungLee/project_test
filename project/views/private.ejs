@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 제이쿼리 CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <!-- axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- socket io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <h1>1:1 채팅방</h1><br/>
+    <div>접속자 명단</div>
+    <div></div>
+    <div id="msg"></div><br/>
+
+    <!-- <form id="chat">
+        <select id="userList"></select>
+        <input type="text" id="message" placeholder="메세지 입력" />
+        <button id="btn">입력</button>
+    </form> -->
+    <input type="text" id="message" placeholder="메세지 입력" />
+    <button id="btn">입력</button>
+
+    <script>
+        const msg = document.querySelector("#msg");
+        $("#btn").on("click",function(){
+            const div = document.createElement('div');
+            const p = document.createElement('p');
+            p.textContent = $("#message").val();
+            div.appendChild(p);
+            msg.appendChild(div);
+            $("#message").val("");
+        })
+    </script>
+</body>
+</html>
