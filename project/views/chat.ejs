@@ -19,17 +19,54 @@
     <div id="usename"></div>
     <div id="chulsu">철수랑 이야기하기</div>
     <div id="dongmin">동민이랑 이야기하기</div>
+    <form id="room">
+        룸넘버<input type="text" id="roomname">
+        <button>방들어가기</button>
+    </form>
+    <form id = "chat">
+        <input type="text" id="message">
+        <button>보내기</button>
+    </form>
+    <div id="chatting"></div>
     <script>
         const socket = io();
+        //방입력하는 form
+        const roomForm = document.querySelector("#room")
+        //메세지 form
+        const messageForm = document.querySelector("#chat")
+        //아이디랑 닉네임
         const userid = localStorage.getItem("user_id")
         const name = localStorage.getItem("user_name")
+        //아이디 저장하는거
         var myName;
         $("#useid").text(userid);
         $("#usename").text(name);
 
         //철수랑 1:1 채팅 하기
-        $("#chulst").on("click", function(){
-            
+
+        //방 번호 정해서 들어가기
+        roomForm.addEventListener("submit", (e)=>{
+            e.preventDefault();
+            const roomName = roomForm.querySelector("#roomname");
+            console.log("방이름", roomName.value)
+            socket.emit("create", roomName.value,name);
+        });
+
+        //메시지 보내기
+        messageForm.addEventListener("submit", (e)=>{
+            e.preventDefault();
+            const message = document.querySelector("#message");
+            socket.emit("sendMessage", message.value, userid);
+        })
+        //메세지 띄우기
+        msg = document.querySelector("#chatting")
+        socket.on("newMessage", (message)=>{
+            console.log("메세지?", message);
+        const div = document.createElement("div");
+        const p = document.createElement("p");
+        p.textContent = message;
+        div.appendChild(p);
+        msg.appendChild(div);
         })
     </script>
 </body>
