@@ -1,15 +1,29 @@
 const {DataTypes} = require('sequelize');
 
 const Chat = (sequelize)=>{
-    return sequelize.define('chatting',{
-        userid:{
+    const chats = sequelize.define('chatting',{
+        chatNum:{
+            type : DataTypes.INTEGER,
+            allowNull : false,
+            primaryKey : true,
+            autoIncrement : true
+        },
+        roomNum:{
             type: DataTypes.STRING(255),
             allowNull : false,
         },
-        chat:{
+        message:{
             type: DataTypes.STRING(255),
             allowNull : false,
-        },   
+        },
+        send:{
+            type: DataTypes.STRING(255),
+            allowNull : false,
+        }
     });
+    chats.associate = (models)=>{
+        chats.belongsTo(models.room,{foreignKey : {roomNum}, onDelete: 'CASCADE'});
+    }
+    return chats;
 }
 module.exports = Chat;
