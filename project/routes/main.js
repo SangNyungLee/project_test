@@ -19,7 +19,8 @@ router.get('/chat', controller.chat);
 //1:1화면
 router.get('/private', controller.private);
 
-
+//채팅
+router.post('/chat', controller.post_chat);
 
 
 

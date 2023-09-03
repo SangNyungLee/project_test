@@ -9,10 +9,14 @@ const room = (sequelize)=>{
             primaryKey : true,
             autoIncrement : true
         },
-        createName:{
+        Name1:{
             type: DataTypes.STRING(255),
             allowNull : false,
         },
+        Name2:{
+            type: DataTypes.STRING(255),
+            allowNull : false,
+        }
         //방 이름은 추후에 추가
 
         // roomName:{

@@ -15,10 +15,12 @@
 </head>
 <body>
     <h1>채팅방</h1>
-    <div id="useid"></div>
-    <div id="usename"></div>
-    <!-- <div id="chulsu">철수랑 이야기하기</div>
-    <div id="dongmin">동민이랑 이야기하기</div> -->
+    아이디 : <div id="useid"></div>
+    이름 : <div id="usename"></div>
+    <div><h2>내 방 리스트</h2></div>
+    <div>
+        <ul id="userlist"></ul>
+    </div>
     <form id="room">
         방 번호 적기<input type="text" id="roomname">
         <button>방들어가기</button>
@@ -29,8 +31,9 @@
     </form>
     <div id="chatting"></div>
     <script>
-        
         const socket = io();
+        //내 방 목록
+        let roomList;
         //메세지 띄우기
         msg = document.querySelector("#chatting")
 
@@ -45,18 +48,41 @@
 
         //내 닉네임
         const name = localStorage.getItem("user_name")
-        
+
         //아이디 저장하는거
-        var myName;
         $("#useid").text(userid);
         $("#usename").text(name);
+
+        //이 아이디 배열 리스트
+        let mylist;
+        
+        //아이디 보내서 내가 속한 방 리스트 값 가져오는거
+        axios({
+            method: 'POST',
+            url :'/chat',
+            data:{
+                userid : localStorage.getItem("user_id"),
+            }
+        }).then((res)=>{
+            const userlist = document.querySelector("#userlist")
+            let list = res.data;
+            mylist = res.data;
+            let i = 1;
+            list.forEach((res)=>{
+                const li = document.createElement("li");
+                li.textContent = `${i}번째 방 : ${res}`;
+                userlist.appendChild(li);
+                i++;
+            })
+        })
 
         //방 번호 정해서 들어가기
         roomForm.addEventListener("submit", (e)=>{
             e.preventDefault();
             const roomName = roomForm.querySelector("#roomname");
             console.log("방이름", roomName.value)
-            socket.emit("create", roomName.value,userid);
+            //mylist : 지금 로그인한 애가 가지고 있는 방의 배열
+            socket.emit("create", roomName.value,userid, mylist);
             socket.on("preMessage",(message)=>{
                 message.forEach(row=>{
                     const div = document.createElement("div");

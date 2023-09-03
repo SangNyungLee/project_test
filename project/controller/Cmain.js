@@ -1,5 +1,5 @@
-const {User} = require('../models');
-const {userRoom} = require('../models');
+const {User, userRoom, room, Sequelize} = require('../models');
+const Op = Sequelize.Op;
 
 ////////render화면///////////
 //메인화면
@@ -42,4 +42,41 @@ exports.post_signup = async (req,res)=>{
     await User.create({userid, pw, name})
     res.send({result:true});
     await userRoom.create({userid : userid, roomList : arr2})
+}
+
+//채팅
+exports.post_chat = async (req,res)=>{
+    let list= [];
+    try {
+        myName = req.body.userid
+        const listfind = await room.findAll({
+            where : {
+                [Op.or]: [
+                    { Name1: myName },
+                    { Name2: myName },
+                    ],
+            },
+        })
+        // console.log(listfind)
+        //빈배열이 아닐 때 발동함
+        if(listfind != []){
+            listfind.forEach(res=>{
+                if(res.Name1 != myName){
+                    list.push(res.Name1)
+                }
+                if(res.Name2 != myName){
+                    list.push(res.Name2)
+                }
+            })
+        }else{
+            console.log('빈배열임 ㅠ')
+            console.log("리스트", list)
+        }
+        //배열로 담겨있음
+        console.log("리스트===", list);
+        res.send(list);
+    } catch (error) {
+        console.log(error);
+    }
+
 }
