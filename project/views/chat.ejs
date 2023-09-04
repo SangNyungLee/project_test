@@ -77,6 +77,8 @@
                 i++;
                 //방 목록 클릭했을 때 그 방으로 들어가게 해주는거
                 li.addEventListener("click",function(){
+                    const clear = document.getElementById('chatting')
+                    clear.textContent="";
                         const roomName = roomForm.querySelector("#roomname");
                         socket.emit("create", res,userid, mylist);
                         alert(`들어간 방 이름은 ${res} 입니다.`)
