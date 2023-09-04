@@ -34,13 +34,13 @@
         });
         console.log(result);
         console.log("rrr===========", result.data.result.userid);
+        const userid = result.data.result.userid;
         if ({ result: true }) {
           alert("로그인되었습니다.");
           localStorage.setItem("user_id", result.data.result.userid);
           localStorage.setItem("user_name", result.data.result.name);
-          //로그인하면 전체채팅방으로 강제로 들어가게 하기
           window.location.href = "/chat";
-          await socket.emit("all", result.data.result.userid);
+
         } else {
           alert("로그인실패");
         }

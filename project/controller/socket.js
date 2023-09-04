@@ -10,16 +10,8 @@ exports.connection = (io, socket) => {
   //접속한 회원리스트
   let userList = [];
 
-  //전체 채팅방 입장
-  socket.on("all", (username) => {
-    console.log("전체채팅방 로그인 됏음");
-    //전체 채팅방(999)로 join
-    socket.join(999);
-    userList.push(username);
-    //현재 접속자
-    socket.emit("currentConn", userList);
-    console.log("유저리스트목록============", userList);
-  });
+  //로그인하면 바로 전체 채팅방으로 들어감
+
   socket.on("create", async (roomName, userid, mylist) => {
     // findall 해서 내가 입장하려는 방이랑 내 닉네임으로 만들어진 곳이 있는지 찾기
     const userFind1 = await room.findAll({
@@ -84,6 +76,32 @@ exports.connection = (io, socket) => {
     //socket.room에 방 이름 저장시켜둠
     socket.room = realNumber;
   });
+/////////create 끝/////////////
+
+    //전체채팅방 입장
+    socket.on("groupChat", async(userid)=>{
+      const res = await participant.findOne({
+        where :{roomNum : 999, member_list : userid}
+      })
+      // participant 테이블에 없으면 추가
+      if(res === null){
+        console.log("없음");
+        participant.create({
+          roomNum: 999,
+          member_list: userid,
+        });
+      }else{ //있을 때는 배열에 추가 안함
+        console.log("있음");
+      }
+      socket.join(999); //999번방이 전체채팅방
+      socket.emit("roomNumber", 999);
+      roomList.push(999);
+
+      //방번호 저장(메시지 보낼 때 필요)
+      socket.room = 999;
+      realNumber = 999;
+      //방 번호 프론트로 보내기
+    })
 
   //메세지 보내기
   socket.on("sendMessage", async (message, userid) => {

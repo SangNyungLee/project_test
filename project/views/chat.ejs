@@ -73,16 +73,6 @@
       let realNumber;
 
       //현재 접속자
-      socket.on("currentConn", (user) => {
-        console.log("현재유저목록", user);
-        const nowList = document.querySelector("#nowList");
-        user.forEach((res) => {
-          console.log("현재 불러온 유저", res);
-          const li = document.createElement("li");
-          li.textContent = `${res}님 현재 접속중`;
-          nowList.appendChild(li);
-        });
-      });
 
       //아이디 보내서 내가 속한 방 리스트 값 가져오는거
       axios({
@@ -108,8 +98,10 @@
             const roomName = roomForm.querySelector("#roomname");
             socket.emit("create", res, userid, mylist);
             alert(`들어간 방 이름은 ${res} 입니다.`);
+
             // 이전채팅내용 가져오기
             await socket.on("roomNumber", (data) => {
+                console.log("여기까진 왔음");
               axios({
                 method: "POST",
                 url: "/preMessage",
@@ -166,6 +158,11 @@
         div.appendChild(p);
         msg.appendChild(div);
       });
+      //전체 채팅방 들어가기
+      function gogo(){
+        socket.emit("groupChat", userid);
+        alert("전체 채팅방 입장")
+      }
     </script>
   </body>
 </html>
