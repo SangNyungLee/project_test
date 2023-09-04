@@ -1,45 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- 제이쿼리 CDN -->
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+      crossorigin="anonymous"
+    ></script>
     <!-- axios CDN -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-     <!-- socket io -->
-     <script src="/socket.io/socket.io.js"></script>
+    <!-- socket io -->
+    <script src="/socket.io/socket.io.js"></script>
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>로그인</h1>
-    <input type="text" id="userid"><br/>
-    <input type="password" id="pw"><br/>
+    <input type="text" id="userid" /><br />
+    <input type="password" id="pw" /><br />
     <button type="button" onclick="signin()">로그인하기</button>
 
     <script>
-        const socket = io();
-        async function signin(){
-            const result = await axios({
-                method : 'POST',
-                url : '/signin',
-                data :{
-                    userid : $("#userid").val(),
-                    pw : $("#pw").val(),
-                }
-            })
-            console.log(result);
-            console.log("rrr===========", result.data.result.userid)
-            if({result : true}){
-                console.log(result.userid);
-                alert('로그인되었습니다.')
-                localStorage.setItem("user_id", result.data.result.userid)
-                localStorage.setItem("user_name", result.data.result.name)
-                window.location.href = '/chat'
-            }else{
-                alert('로그인실패')
-            }
+      const socket = io();
+      async function signin() {
+        const result = await axios({
+          method: "POST",
+          url: "/signin",
+          data: {
+            userid: $("#userid").val(),
+            pw: $("#pw").val(),
+          },
+        });
+        console.log(result);
+        console.log("rrr===========", result.data.result.userid);
+        if ({ result: true }) {
+          alert("로그인되었습니다.");
+          localStorage.setItem("user_id", result.data.result.userid);
+          localStorage.setItem("user_name", result.data.result.name);
+          //로그인하면 전체채팅방으로 강제로 들어가게 하기
+          window.location.href = "/chat";
+          await socket.emit("all", result.data.result.userid);
+        } else {
+          alert("로그인실패");
         }
+      }
     </script>
-</body>
+  </body>
 </html>

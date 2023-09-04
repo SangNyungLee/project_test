@@ -1,4 +1,4 @@
-const { User, room, Sequelize, Chat } = require("../models");
+const { User, room, Sequelize, Chat, participant } = require("../models");
 const Op = Sequelize.Op;
 
 ////////render화면///////////
@@ -39,6 +39,7 @@ exports.post_signup = async (req, res) => {
   const { userid, pw, name } = req.body;
   const arr = [req.body.userid];
   await User.create({ userid, pw, name });
+  await participant.create({ roomNum: 999, member_list: userid });
   res.send({ result: true });
 };
 

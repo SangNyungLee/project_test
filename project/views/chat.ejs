@@ -22,6 +22,10 @@
     <div id="useid"></div>
     이름 :
     <div id="usename"></div>
+    <div><h2>현재 접속자</h2></div>
+    <div>
+      <ul id="nowList"></ul>
+    </div>
     <div><h2>내 방 리스트</h2></div>
     <div>
       <ul id="userlist"></ul>
@@ -30,6 +34,7 @@
       방 번호 적기<input type="text" id="roomname" />
       <button>방들어가기</button>
     </form>
+    <button onclick="gogo()">전체채팅방 접속</button>
     <form id="chat">
       <input type="text" id="message" />
       <button>보내기</button>
@@ -66,6 +71,18 @@
 
       //내가 들어간 방 번호
       let realNumber;
+
+      //현재 접속자
+      socket.on("currentConn", (user) => {
+        console.log("현재유저목록", user);
+        const nowList = document.querySelector("#nowList");
+        user.forEach((res) => {
+          console.log("현재 불러온 유저", res);
+          const li = document.createElement("li");
+          li.textContent = `${res}님 현재 접속중`;
+          nowList.appendChild(li);
+        });
+      });
 
       //아이디 보내서 내가 속한 방 리스트 값 가져오는거
       axios({

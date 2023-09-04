@@ -9,13 +9,14 @@ const db = {};
 let sequelize = new Sequelize(
   config.database,
   config.username,
-  config.password
+  config.password,
+  config
 );
 
 //db에 user을 생성
 db.User = require("./User")(sequelize);
 db.Chat = require("./Chat")(sequelize);
-db.userRoom = require("./userRoom")(sequelize);
+db.participant = require("./participant")(sequelize);
 db.room = require("./room")(sequelize);
 
 db.sequelize = sequelize;
