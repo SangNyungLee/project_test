@@ -71,29 +71,48 @@
             list.forEach((res)=>{
                 const li = document.createElement("li");
                 li.textContent = `${i}번째 방 : ${res}`;
+                //li에 id값 부여
+                li.setAttribute('id',`${res}`)
                 userlist.appendChild(li);
                 i++;
+                //방 목록 클릭했을 때 그 방으로 들어가게 해주는거
+                li.addEventListener("click",function(){
+                        const roomName = roomForm.querySelector("#roomname");
+                        socket.emit("create", res,userid, mylist);
+                        alert(`들어간 방 이름은 ${res} 입니다.`)
+                        socket.on("preMessage",(message)=>{
+                    message.forEach(row=>{
+                        const div = document.createElement("div");
+                        const p = document.createElement("p");
+                        p.textContent = `${row.send} : ${row.message}`
+                        div.appendChild(p);
+                        msg.appendChild(div);
+                    })
+                })
+                    
+                })
             })
         })
 
-        //방 번호 정해서 들어가기
-        roomForm.addEventListener("submit", (e)=>{
-            e.preventDefault();
-            const roomName = roomForm.querySelector("#roomname");
-            console.log("방이름", roomName.value)
-            //mylist : 지금 로그인한 애가 가지고 있는 방의 배열
-            socket.emit("create", roomName.value,userid, mylist);
-            socket.on("preMessage",(message)=>{
-                message.forEach(row=>{
-                    const div = document.createElement("div");
-                    const p = document.createElement("p");
-                    p.textContent = `${row.send} : ${row.message}`
-                    div.appendChild(p);
-                    msg.appendChild(div);
-                    // console.log(`${row.send} : ${row.message}`);
-                })
-            })
-        });
+
+        // //방 번호 정해서 들어가기
+        // roomForm.addEventListener("submit", (e)=>{
+        //     e.preventDefault();
+        //     const roomName = roomForm.querySelector("#roomname");
+        //     console.log("방이름", roomName.value)
+        //     //mylist : 지금 로그인한 애가 가지고 있는 방의 배열
+        //     socket.emit("create", roomName.value,userid, mylist);
+        //     socket.on("preMessage",(message)=>{
+        //         message.forEach(row=>{
+        //             const div = document.createElement("div");
+        //             const p = document.createElement("p");
+        //             p.textContent = `${row.send} : ${row.message}`
+        //             div.appendChild(p);
+        //             msg.appendChild(div);
+        //             // console.log(`${row.send} : ${row.message}`);
+        //         })
+        //     })
+        // });
 
         //메시지 보내기
         messageForm.addEventListener("submit", (e)=>{
