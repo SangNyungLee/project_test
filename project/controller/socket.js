@@ -94,7 +94,7 @@ exports.connection = (io, socket) => {
         console.log("있음");
       }
       socket.join(999); //999번방이 전체채팅방
-      socket.emit("roomNumber", 999);
+      socket.emit("999Room", 999);
       roomList.push(999);
 
       //방번호 저장(메시지 보낼 때 필요)

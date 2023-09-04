@@ -92,6 +92,7 @@
           //li에 id값 부여
           li.setAttribute("id", `${res}`);
           i++;
+
           //방 목록 클릭했을 때 그 방으로 들어가게 해주는거
           li.addEventListener("click", async function (e) {
             e.preventDefault();
@@ -159,10 +160,32 @@
         msg.appendChild(div);
       });
       //전체 채팅방 들어가기
-      function gogo(){
+      async function gogo(){
         socket.emit("groupChat", userid);
         alert("전체 채팅방 입장")
+        const roomName = 999;
+        await socket.on("999Room", (data)=>{
+            console.log("!!!!!!!!!!!왓다!!!!!!!!!!!!")
+            axios({
+                method : 'POST',
+                url : "/preMessage",
+                data:{
+                    roomNum : 999,
+                }
+            }).then((res)=>{
+                clear.innerHTML = "";
+                const postMessage = res.data.chatMessage;
+                postMessage.forEach((row) => {
+                  const div = document.createElement("div");
+                  const p = document.createElement("p");
+                  p.textContent = `${row.send} : ${row.message}`;
+                  div.appendChild(p);
+                  msg.appendChild(div);
+                });                
+            })
+        })
       }
+      
     </script>
   </body>
 </html>
