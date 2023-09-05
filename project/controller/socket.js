@@ -8,34 +8,34 @@ const {
 const Op = Sequelize.Op;
 // const {room} = require('../models');
 
+//내이름 저장
+let myID;
+
+//진짜 입장하는 방번호
+let realNumber;
+
+//접속한 사람들
+let roomList=[];
+
 exports.connection = (io, socket) => {
-  //진짜 입장하는 방번호
-  let realNumber;
-  //내가 입장한 방리스트
-  let roomList = [];
-  //접속한 회원리스트
 
   //로그인하면 유저이름 받아서 DB에 저장하는거
   socket.on("userlist", (userid) => {
+    myID = userid
+    console.log("마이아이디",myID);
+    console.log("유저이름",userid);
     const connectUser = connectList.create({
       userid: userid,
     });
   });
 
-  //접속유저 찾는 함수
-  // async function findUser() {
-  //   var userResult = [];
-  //   const findUser = await connectList.findAll();
-  //   console.log(findUser);
-  //   findUser.forEach((res) => {
-  //     userResult.push(res.userid);
-  //   });
-  //   return findUser;
-  // }
+  // 접속하면 항상 내 이름으로 된 방으로 입장하는 코드
+  socket?.join(myID)
+  console.log("내이름!~!!!!!!!!!!!!!!!!!",myID)
+
   //누군가 접속했을 때마다 현재 누구 접속해있는지 갱신하는거
   io.emit("nowOn");
 
-  //로그인하면 바로 전체 채팅방으로 들어감
   socket.on("create", async (roomName, userid, mylist) => {
     // findall 해서 내가 입장하려는 방이랑 내 닉네임으로 만들어진 곳이 있는지 찾기
     const userFind1 = await room.findAll({
@@ -129,8 +129,11 @@ exports.connection = (io, socket) => {
   });
 
   //메세지 보내기
-  socket.on("sendMessage", async (message, userid) => {
+  socket.on("sendMessage", async (message, userid, otherName) => {
     io.to(socket.room).emit("newMessage", message);
+    console.log("보내는 사람은?", otherName);
+    //메세지 받은사람한테 알람가게하기
+    io.to(otherName).emit("notification", myID);
     //받은 메세지랑, 보낸사람 DB에 다 저장하기
     const chatval = await Chat.create({
       roomNum: realNumber,

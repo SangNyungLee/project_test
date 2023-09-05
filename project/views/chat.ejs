@@ -17,6 +17,8 @@
     <title>Document</title>
   </head>
   <body>
+    <h2>알림</h2>
+    <div id="notify"></div>
     <h1>채팅방</h1>
     아이디 :
     <div id="useid"></div>
@@ -81,7 +83,10 @@
       //내 닉네임
       const name = localStorage.getItem("user_name");
 
-      //아이디 저장하는거
+      //상대방 닉네임
+      let otherName;
+
+      //아이디 불러오기
       $("#useid").text(userid);
       $("#usename").text(name);
 
@@ -93,6 +98,10 @@
 
       //현재 접속자
 
+      //알람 받았을 때
+      socket.on("notification", (name)=>{
+        alert(`${name}님에게 메세지가 도착했습니다.~~~`)
+      })
       //아이디 보내서 내가 속한 방 리스트 값 가져오는거
       axios({
         method: "POST",
@@ -116,12 +125,13 @@
           li.addEventListener("click", async function (e) {
             e.preventDefault();
             const roomName = roomForm.querySelector("#roomname");
+
+            //채팅하는 상대방 이름 저장(이름 저장하는 방법은 추후에 변경)
             socket.emit("create", res, userid, mylist);
             alert(`들어간 방 이름은 ${res} 입니다.`);
 
             // 이전채팅내용 가져오기
             await socket.on("roomNumber", (data) => {
-              console.log("여기까진 왔음");
               axios({
                 method: "POST",
                 url: "/preMessage",
@@ -149,6 +159,7 @@
       roomForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const roomName = roomForm.querySelector("#roomname");
+        otherName = roomName.value
         console.log("방이름", roomName.value);
         //mylist : 지금 로그인한 애가 가지고 있는 방의 배열
         socket.emit("create", roomName.value, userid, mylist);
@@ -167,7 +178,7 @@
       messageForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const message = document.querySelector("#message");
-        socket.emit("sendMessage", message.value, userid);
+        socket.emit("sendMessage", message.value, userid, otherName);
       });
 
       socket.on("newMessage", (message) => {
