@@ -1,4 +1,10 @@
-const { Chat, participant, room, Sequelize } = require("../models");
+const {
+  Chat,
+  participant,
+  room,
+  Sequelize,
+  connectList,
+} = require("../models");
 const Op = Sequelize.Op;
 // const {room} = require('../models');
 
@@ -8,10 +14,28 @@ exports.connection = (io, socket) => {
   //내가 입장한 방리스트
   let roomList = [];
   //접속한 회원리스트
-  let userList = [];
+
+  //로그인하면 유저이름 받아서 DB에 저장하는거
+  socket.on("userlist", (userid) => {
+    const connectUser = connectList.create({
+      userid: userid,
+    });
+  });
+
+  //접속유저 찾는 함수
+  // async function findUser() {
+  //   var userResult = [];
+  //   const findUser = await connectList.findAll();
+  //   console.log(findUser);
+  //   findUser.forEach((res) => {
+  //     userResult.push(res.userid);
+  //   });
+  //   return findUser;
+  // }
+  //누군가 접속했을 때마다 현재 누구 접속해있는지 갱신하는거
+  io.emit("nowOn");
 
   //로그인하면 바로 전체 채팅방으로 들어감
-
   socket.on("create", async (roomName, userid, mylist) => {
     // findall 해서 내가 입장하려는 방이랑 내 닉네임으로 만들어진 곳이 있는지 찾기
     const userFind1 = await room.findAll({
@@ -76,32 +100,33 @@ exports.connection = (io, socket) => {
     //socket.room에 방 이름 저장시켜둠
     socket.room = realNumber;
   });
-/////////create 끝/////////////
+  /////////create 끝/////////////
 
-    //전체채팅방 입장
-    socket.on("groupChat", async(userid)=>{
-      const res = await participant.findOne({
-        where :{roomNum : 999, member_list : userid}
-      })
-      // participant 테이블에 없으면 추가
-      if(res === null){
-        console.log("없음");
-        participant.create({
-          roomNum: 999,
-          member_list: userid,
-        });
-      }else{ //있을 때는 배열에 추가 안함
-        console.log("있음");
-      }
-      socket.join(999); //999번방이 전체채팅방
-      socket.emit("999Room", 999);
-      roomList.push(999);
+  //전체채팅방 입장
+  socket.on("groupChat", async (userid) => {
+    const res = await participant.findOne({
+      where: { roomNum: 999, member_list: userid },
+    });
+    // participant 테이블에 없으면 추가
+    if (res === null) {
+      console.log("없음");
+      participant.create({
+        roomNum: 999,
+        member_list: userid,
+      });
+    } else {
+      //있을 때는 배열에 추가 안함
+      console.log("있음");
+    }
+    socket.join(999); //999번방이 전체채팅방
+    socket.emit("999Room", 999);
+    roomList.push(999);
 
-      //방번호 저장(메시지 보낼 때 필요)
-      socket.room = 999;
-      realNumber = 999;
-      //방 번호 프론트로 보내기
-    })
+    //방번호 저장(메시지 보낼 때 필요)
+    socket.room = 999;
+    realNumber = 999;
+    //방 번호 프론트로 보내기
+  });
 
   //메세지 보내기
   socket.on("sendMessage", async (message, userid) => {

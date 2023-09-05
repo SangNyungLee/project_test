@@ -42,6 +42,24 @@
     <div id="chatting"></div>
     <script>
       const socket = io();
+
+      //현재 갱신받은 리스트 받는 곳
+      socket.on("nowOn", () => {
+        clear2.innerHTML = "";
+        axios({
+          method: "POST",
+          url: "ConnectUser",
+        }).then((res) => {
+          console.log(res.data);
+          let result = res.data;
+          result.forEach((res) => {
+            console.log(res.userid);
+            const li = document.createElement("li");
+            li.textContent = `접속자 : ${res.userid}`;
+            nowList.appendChild(li);
+          });
+        });
+      });
       //내 방 목록
       let roomList;
       //메세지 띄우기
@@ -49,6 +67,7 @@
 
       //채팅리스트
       const clear = document.getElementById("chatting");
+      const clear2 = document.getElementById("nowList");
 
       //방입력하는 form
       const roomForm = document.querySelector("#room");
@@ -102,7 +121,7 @@
 
             // 이전채팅내용 가져오기
             await socket.on("roomNumber", (data) => {
-                console.log("여기까진 왔음");
+              console.log("여기까진 왔음");
               axios({
                 method: "POST",
                 url: "/preMessage",
@@ -160,32 +179,31 @@
         msg.appendChild(div);
       });
       //전체 채팅방 들어가기
-      async function gogo(){
+      async function gogo() {
         socket.emit("groupChat", userid);
-        alert("전체 채팅방 입장")
+        alert("전체 채팅방 입장");
         const roomName = 999;
-        await socket.on("999Room", (data)=>{
-            console.log("!!!!!!!!!!!왓다!!!!!!!!!!!!")
-            axios({
-                method : 'POST',
-                url : "/preMessage",
-                data:{
-                    roomNum : 999,
-                }
-            }).then((res)=>{
-                clear.innerHTML = "";
-                const postMessage = res.data.chatMessage;
-                postMessage.forEach((row) => {
-                  const div = document.createElement("div");
-                  const p = document.createElement("p");
-                  p.textContent = `${row.send} : ${row.message}`;
-                  div.appendChild(p);
-                  msg.appendChild(div);
-                });                
-            })
-        })
+        await socket.on("999Room", (data) => {
+          console.log("!!!!!!!!!!!왓다!!!!!!!!!!!!");
+          axios({
+            method: "POST",
+            url: "/preMessage",
+            data: {
+              roomNum: 999,
+            },
+          }).then((res) => {
+            clear.innerHTML = "";
+            const postMessage = res.data.chatMessage;
+            postMessage.forEach((row) => {
+              const div = document.createElement("div");
+              const p = document.createElement("p");
+              p.textContent = `${row.send} : ${row.message}`;
+              div.appendChild(p);
+              msg.appendChild(div);
+            });
+          });
+        });
       }
-      
     </script>
   </body>
 </html>

@@ -1,4 +1,11 @@
-const { User, room, Sequelize, Chat, participant } = require("../models");
+const {
+  User,
+  room,
+  Sequelize,
+  Chat,
+  participant,
+  connectList,
+} = require("../models");
 const Op = Sequelize.Op;
 
 ////////render화면///////////
@@ -84,4 +91,9 @@ exports.preMessage = async (req, res) => {
   } catch (error) {
     console.log("에러=====================", error);
   }
+};
+
+exports.ConnectUser = async (req, res) => {
+  let ConnectUser = await connectList.findAll();
+  res.send(ConnectUser);
 };

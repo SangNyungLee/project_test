@@ -39,8 +39,11 @@
           alert("로그인되었습니다.");
           localStorage.setItem("user_id", result.data.result.userid);
           localStorage.setItem("user_name", result.data.result.name);
-          window.location.href = "/chat";
 
+          //로그인할 때 서버에 리스트 저장하기.
+          socket.emit("userlist", userid);
+
+          window.location.href = "/chat";
         } else {
           alert("로그인실패");
         }

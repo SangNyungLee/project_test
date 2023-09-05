@@ -25,4 +25,6 @@ router.post("/chat", controller.post_chat);
 //채팅 불러오기
 router.post("/preMessage", controller.preMessage);
 
+//현재 접속자 불러오기
+router.post("/ConnectUser", controller.ConnectUser);
 module.exports = router;

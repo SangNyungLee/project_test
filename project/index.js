@@ -21,7 +21,7 @@ const socketRouter = require("./routes/socket");
 socketRouter(io);
 
 //dbSync
-db.sequelize.sync({ force: false }).then(() => {
+db.sequelize.sync({ force: true }).then(() => {
   server.listen(PORT, () => {
     console.log(`http://localhost:${PORT}`);
   });

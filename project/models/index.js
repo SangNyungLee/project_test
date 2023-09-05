@@ -18,6 +18,7 @@ db.User = require("./User")(sequelize);
 db.Chat = require("./Chat")(sequelize);
 db.participant = require("./participant")(sequelize);
 db.room = require("./room")(sequelize);
+db.connectList = require("./connList")(sequelize);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
