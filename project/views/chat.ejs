@@ -44,7 +44,11 @@
     <div id="chatting"></div>
     <script>
       const socket = io();
-
+      //보내는 시간 계산
+      let now = new Date();
+      let hour = now.getHours();
+      let minute = now.getMinutes();
+      
       //현재 갱신받은 리스트 받는 곳
       socket.on("nowOn", () => {
         clear2.innerHTML = "";

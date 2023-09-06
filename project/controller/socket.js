@@ -18,7 +18,12 @@ let realNumber;
 let roomList=[];
 
 exports.connection = (io, socket) => {
+  console.log("진짜 socket!!!!!!!!!!!!!!!!!!", socket.request.session);
+  socket.request.session.username = 'john_doe';
+  socket.request.session.save();
 
+  console.log("이름?", socket.request.session.username);
+  
   //로그인하면 유저이름 받아서 DB에 저장하는거
   socket.on("userlist", (userid) => {
     myID = userid
